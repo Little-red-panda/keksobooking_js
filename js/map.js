@@ -87,9 +87,14 @@ const generateNotices = () => {
 }
 const getNotices = generateNotices()
 
+
+
+
+
+
 // Делаем карту активной (временное решение)
-const pinMap = document.querySelector('.map')
-pinMap.classList.remove('map--faded')
+const map = document.querySelector('.map')
+// map.classList.remove('map--faded')
 
 // Делаем метки
 const mapPins = document.querySelector('.map__pins')
@@ -97,21 +102,22 @@ const mapPins = document.querySelector('.map__pins')
 const getPins = (data) => {
   const pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin')
   const fragment = document.createDocumentFragment()
-  for (let i = 0; i < data.length; i++) {
+  data.forEach(pinData => {
     const pin = pinTemplate.cloneNode(true)
     const pinImg = pin.querySelector('img')
-    pin.style = `left: ${data[i].location.x - pinImg.width / 2}px; top: ${data[i].location.y - pinImg.height / 2}px`
-    pinImg.src = data[i].author.avatar
-    pinImg.alt = data[i].offer.title
+    pin.style = `left: ${pinData.location.x - pinImg.width / 2}px; top: ${pinData.location.y - pinImg.height / 2}px`
+    pinImg.src = pinData.author.avatar
+    pinImg.alt = pinData.offer.title
     fragment.append(pin)
-  }
+    pin.addEventListener(`click`, () => openCard(pinData))
+  })
   return fragment
 }
-mapPins.append(getPins(getNotices))
+
+// mapPins.append(getPins(getNotices))
 
 // Создаем карточку объявления 
-const map = document.querySelector('.map')
-const mapFilters = document.querySelector('.map__filters-container') // Элемент, перед которым будем вставлять карточку
+const mapFilters = document.querySelector('.map__filters-container') // Элемент, перед которым будем вставлять карточку объявления
 
 const getCard = (data) => {
   const cardTemplate = document.querySelector('#card').content.querySelector('.map__card')
@@ -200,7 +206,81 @@ const getCard = (data) => {
   card.querySelector('.popup__description').textContent = description
   card.querySelector('.popup__photos').append(getPhotos(photos))
   card.querySelector('.popup__avatar').src = avatar
+  map.insertBefore(card, mapFilters)
+  const closeButton = card.querySelector('.popup__close')
+  closeButton.addEventListener('click', closeCard)
   return card
+
 }
-map.insertBefore(getCard(getNotices[0]), mapFilters)
+// map.insertBefore(getCard(getNotices[0]), mapFilters)
+
+
+
+
+
+
+// ------------------------------- Задание 2 ------------------------------------
+
+const MOUSE_MAIN_BUTTON = 0
+
+// Поля формы в неактивном состоянии
+const fieldsets = document.querySelectorAll('fieldset')
+fieldsets.forEach(el => el.setAttribute('disabled', 'disabled')) 
+
+// Активация карты и полей формы при нажатии на метку
+const mainPin = document.querySelector('.map__pin--main')
+const form = document.querySelector('.ad-form')
+const mapActivation = () => {
+  map.classList.remove('map--faded')
+  form.classList.remove('ad-form--disabled')
+  fieldsets.forEach(el => el.removeAttribute('disabled'))
+  newAddress()
+  mapPins.append(getPins(getNotices))
+}
+mainPin.addEventListener('mouseup', (evt) => {
+  if (evt.button === MOUSE_MAIN_BUTTON) {
+    mapActivation()
+  }
+})
+
+
+// Заполнение поля адреса
+const MAIN_PIN_HEIGHT = 62
+const MAIN_PIN_WIDTH = 62
+const MAIN_PIN_TIP = 22
+const inputAddress = document.querySelector('#address')
+const pinCenterPositionX = Math.floor(mainPin.offsetLeft + MAIN_PIN_WIDTH / 2);
+const pinCenterPositionY = Math.floor(mainPin.offsetTop + MAIN_PIN_HEIGHT / 2);
+
+inputAddress.value = `${pinCenterPositionX}, ${pinCenterPositionY}`
+
+const newAddress = () => {
+  const pinPositionX = pinCenterPositionX;
+  const pinPositionY = pinCenterPositionY + MAIN_PIN_HEIGHT / 2 + MAIN_PIN_TIP
+  inputAddress.value = `${pinPositionX}, ${pinPositionY}`
+}
+
+const onMapCardEscPress = (evt) => {
+  if (evt.key === `Escape`) {
+    closeCard();
+  }
+};
+
+const openCard = (object) => {
+  closeCard()
+  getCard(object)
+  document.addEventListener('keydown', onMapCardEscPress)
+}
+
+const closeCard = () => {
+  const card = document.querySelector('.map__card')
+  if (card) {
+    card.remove()
+  }
+  document.removeEventListener('keydown', onMapCardEscPress)
+}
+
+
+// ------------------------  ВАЛИДАЦИЯ --------------------------
+
 
