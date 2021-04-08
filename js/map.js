@@ -17,7 +17,7 @@ const DATA_NOTICES = {
   MIN_Y: 130,
   MAX_Y: 630,
   TITLES: ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'],
-  TYPE_OF_ROOMS: ['palace', 'flat', 'house', 'bungalo'],
+  TYPE_OF_ROOMS: ['palace', 'flat', 'house', 'bungalow'],
   TIME: ['12:00', '13:00', '14:00'],
   FEATURES: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'],
   PHOTOS: ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg']
@@ -86,9 +86,6 @@ const generateNotices = () => {
   return notices;
 }
 const getNotices = generateNotices()
-
-
-
 
 
 
@@ -164,23 +161,23 @@ const getCard = (data) => {
   }
   // Перевод типа жилья на русский язык
   const cardType = card.querySelector('.popup__type')
-  const Housing = {
+  const housing = {
     FLAT: `flat`,
-    BUNGALO: `bungalo`,
+    BUNGALOW: `bungalow`,
     HOUSE: `house`,
     PALACE: `palace`,
   }
   switch (type) {
-    case Housing.PALACE:
+    case housing.PALACE:
       cardType.textContent = 'Дворец'
       break
-    case Housing.FLAT:
+    case housing.FLAT:
       cardType.textContent = 'Квартира'
       break
-    case Housing.HOUSE:
+    case housing.HOUSE:
       cardType.textContent = 'Дом'
       break
-    case Housing.BUNGALO:
+    case housing.BUNGALOW:
       cardType.textContent = 'Бунгало'
       break
   }
@@ -210,18 +207,43 @@ const getCard = (data) => {
   const closeButton = card.querySelector('.popup__close')
   closeButton.addEventListener('click', closeCard)
   return card
-
 }
 // map.insertBefore(getCard(getNotices[0]), mapFilters)
 
 
 
-
-
-
 // ------------------------------- Задание 2 ------------------------------------
-
 const MOUSE_MAIN_BUTTON = 0
+const MAIN_PIN_HEIGHT = 62
+const MAIN_PIN_WIDTH = 62
+const MAIN_PIN_TIP = 22
+// Функции открытия/закрытия карточки объявления
+const onMapCardEscPress = (evt) => {
+  if (evt.key === `Escape`) {
+    closeCard();
+  }
+};
+const openCard = (object) => {
+  closeCard()
+  getCard(object)
+  document.addEventListener('keydown', onMapCardEscPress)
+}
+const closeCard = () => {
+  const card = document.querySelector('.map__card')
+  if (card) {
+    card.remove()
+  }
+  document.removeEventListener('keydown', onMapCardEscPress)
+}
+// Функция, удаляющая метки с похожими объявлениями
+const clearPins = () => {
+  const pins = map.querySelectorAll('.map__pin:not(.map__pin--main')
+  if (pins) {
+    pins.forEach(el => {
+      el.parentNode.removeChild(el)
+    })
+  }
+}
 
 // Поля формы в неактивном состоянии
 const fieldsets = document.querySelectorAll('fieldset')
@@ -230,27 +252,61 @@ fieldsets.forEach(el => el.setAttribute('disabled', 'disabled'))
 // Активация карты и полей формы при нажатии на метку
 const mainPin = document.querySelector('.map__pin--main')
 const form = document.querySelector('.ad-form')
-const mapActivation = () => {
+
+const activatePage = () => {
   map.classList.remove('map--faded')
   form.classList.remove('ad-form--disabled')
   fieldsets.forEach(el => el.removeAttribute('disabled'))
-  newAddress()
+  clearPins()
   mapPins.append(getPins(getNotices))
+  newAddress()
+}
+const inactivatePage = () => {
+  map.classList.add('map--faded')
+  form.classList.add('ad-form--disabled')
+  fieldsets.forEach(el => el.setAttribute('disabled', 'disabled'))
+  clearPins()
+  closeCard()
+  inputAddress.value = `${pinCenterPositionX}, ${pinCenterPositionY}`
 }
 mainPin.addEventListener('mouseup', (evt) => {
   if (evt.button === MOUSE_MAIN_BUTTON) {
-    mapActivation()
+    activatePage()
   }
 })
 
 
-// Заполнение поля адреса
-const MAIN_PIN_HEIGHT = 62
-const MAIN_PIN_WIDTH = 62
-const MAIN_PIN_TIP = 22
+// ------------------------  ВАЛИДАЦИЯ --------------------------
+const inputTitle = form.querySelector('#title')
 const inputAddress = document.querySelector('#address')
-const pinCenterPositionX = Math.floor(mainPin.offsetLeft + MAIN_PIN_WIDTH / 2);
-const pinCenterPositionY = Math.floor(mainPin.offsetTop + MAIN_PIN_HEIGHT / 2);
+const inputType = form.querySelector('#type')
+const inputPrice = form.querySelector('#price')
+const inputRooms = form.querySelector('#room_number')
+const inputCapacity = form.querySelector('#capacity')
+const optionsCapacity = inputCapacity.querySelectorAll('option')
+const inputTimein = form.querySelector('#timein')
+const optionsTimein = inputTimein.querySelectorAll('option')
+const inputTimeout = form.querySelector('#timeout')
+const optionsTimeout = inputTimeout.querySelectorAll('option')
+const btnSubmit = form.querySelector('.ad-form__submit')
+const btnReset = form.querySelector('.ad-form__reset')
+
+const addRedBorder = (input) => {
+  input.style = 'border: 2px solid red'
+}
+const deleteRedBorder = (input) => {
+  input.style = 'border: none'
+}
+const addErorrMessage = (input, text) => {
+  return input.setCustomValidity(text)
+}
+const deleteErrorMessage = (input) => {
+  return input.setCustomValidity(``)
+}
+
+// Заполнение поля адреса
+let pinCenterPositionX = Math.floor(mainPin.offsetLeft + MAIN_PIN_WIDTH / 2);
+let pinCenterPositionY = Math.floor(mainPin.offsetTop + MAIN_PIN_HEIGHT / 2);
 
 inputAddress.value = `${pinCenterPositionX}, ${pinCenterPositionY}`
 
@@ -260,27 +316,148 @@ const newAddress = () => {
   inputAddress.value = `${pinPositionX}, ${pinPositionY}`
 }
 
-const onMapCardEscPress = (evt) => {
-  if (evt.key === `Escape`) {
-    closeCard();
+// Валидация заголовка
+const validationTitle = () => {
+  let minTitleLength = inputTitle.minLength
+  let maxTitleLength = inputTitle.maxLength
+  let valueLength = inputTitle.value.length
+  if (valueLength < minTitleLength) {
+    addErorrMessage(inputTitle, `Минимальная длина — 30 символов. Осталось ввести ${minTitleLength - valueLength} символов.`)
+  } else if (valueLength > maxTitleLength) {
+    addErorrMessage(inputTitle, `Максимальная длина — 100 символов. Удалите ${valueLength - maxTitleLength} символов`)
+  } else {
+    deleteErrorMessage(inputTitle)
   }
-};
+  inputTitle.reportValidity()
+}
+inputTitle.addEventListener('input', () => {
+  validationTitle()
+  deleteRedBorder(inputTitle)
+})
 
-const openCard = (object) => {
-  closeCard()
-  getCard(object)
-  document.addEventListener('keydown', onMapCardEscPress)
+// Зависимость цены от типа жилья
+const typeToPrice = {
+  'bungalow': 0,
+  'flat': 1000,
+  'house': 5000,
+  'palace': 10000
 }
 
-const closeCard = () => {
-  const card = document.querySelector('.map__card')
-  if (card) {
-    card.remove()
-  }
-  document.removeEventListener('keydown', onMapCardEscPress)
+const setMinPrice = (num) => {
+  inputPrice.setAttribute('min', num)
+  inputPrice.setAttribute('placeholder', num)
 }
 
+const validationPrice = () => {
+  if (inputPrice.validity.valueMissing) {
+    addErorrMessage(inputPrice, `Обязательное поле`)
+  } else if (inputPrice.validity.badInput) {
+    addErorrMessage(inputPrice, `Пожалуйста, введите число`)
+  } else if (inputPrice.validity.rangeUnderflow) {
+    addErorrMessage(inputPrice, `Пожалуйста, не меньше ${inputPrice.min}`)
+  } else if (inputPrice.validity.rangeOverflow) {
+    addErorrMessage(inputPrice, `Пожалуйста, не больше ${inputPrice.max}`)
+  } else {
+    deleteErrorMessage(inputPrice)
+  }
+}
 
-// ------------------------  ВАЛИДАЦИЯ --------------------------
+inputType.addEventListener('change', () => {
+  let minPrice = typeToPrice[inputType.value]
+  setMinPrice(minPrice)
+})
+inputPrice.addEventListener('change', () => {
+  validationPrice()
+  inputPrice.reportValidity()
+  deleteRedBorder(inputPrice)
+})
+inputPrice.addEventListener('invalid', () => {
+  validationPrice()
+})
+inputPrice.addEventListener('keydown', (evt) => {
+  if (evt.keyCode == 189 || evt.keyCode == 69 || evt.keyCode == 187) {
+    evt.preventDefault()
+  }
+})
 
+// Зависимость количества гостей от количества комнат
+const capacityValidValue = {
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2', '3'],
+  '100': ['0']
+}
 
+const changeCapacityOptions = () => {
+  const rooms = inputRooms.value
+  optionsCapacity.forEach(option => {
+    if (capacityValidValue[rooms].indexOf(option.value) === -1) {
+      option.disabled = true
+    } else {
+      option.disabled = false
+    }
+  })
+}
+changeCapacityOptions()
+
+const validateCapacity = () => {
+  if (optionsCapacity[inputCapacity.selectedIndex].disabled) {
+    addErorrMessage(inputCapacity, 'Недопустимое значение гостей для выбранного количества комнат')
+  } else {
+    deleteErrorMessage(inputCapacity)
+  }
+  inputCapacity.reportValidity()
+}
+
+inputCapacity.addEventListener('change', () => {
+  deleteErrorMessage(inputCapacity)
+  deleteRedBorder(inputCapacity)
+})
+inputRooms.addEventListener('change', () => {
+  changeCapacityOptions()
+  validateCapacity()
+  deleteRedBorder(inputCapacity)
+})
+
+// Зависимость времени заезда и выезда
+const timeinToTimeout = () => {
+  inputTimeout.selectedIndex = inputTimein.selectedIndex
+}
+const timeoutToTimein = () => {
+  inputTimein.selectedIndex = inputTimeout.selectedIndex
+}
+inputTimein.addEventListener('change', () => {
+  timeinToTimeout()
+})
+inputTimeout.addEventListener('change', () => {
+  timeoutToTimein()
+})
+
+//Реализация функционала кнопок отправить и очистить
+const submitForm = () => {
+  if (!inputTitle.validity.valid) {
+    addRedBorder(inputTitle)
+  } else {
+    deleteRedBorder(inputTitle)
+  }
+  if (!inputPrice.validity.valid) {
+    addRedBorder(inputPrice)
+  } else {
+    deleteRedBorder(inputPrice)
+  }
+  if (!inputCapacity.validity.valid) {
+    addRedBorder(inputCapacity)
+  } else {
+    deleteRedBorder(inputCapacity)
+  }
+}
+btnSubmit.addEventListener('click', () => submitForm())
+
+const resetForm = () => {
+  deleteRedBorder(inputTitle)
+  deleteRedBorder(inputPrice)
+  deleteRedBorder(inputCapacity)
+  form.reset()
+  inactivatePage()
+}
+btnReset.addEventListener('click', () => resetForm())
