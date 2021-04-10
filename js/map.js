@@ -269,12 +269,6 @@ const inactivatePage = () => {
   closeCard()
   inputAddress.value = `${pinCenterPositionX}, ${pinCenterPositionY}`
 }
-mainPin.addEventListener('mouseup', (evt) => {
-  if (evt.button === MOUSE_MAIN_BUTTON) {
-    activatePage()
-  }
-})
-
 
 // ------------------------  ВАЛИДАЦИЯ --------------------------
 const inputTitle = form.querySelector('#title')
@@ -311,8 +305,8 @@ let pinCenterPositionY = Math.floor(mainPin.offsetTop + MAIN_PIN_HEIGHT / 2);
 inputAddress.value = `${pinCenterPositionX}, ${pinCenterPositionY}`
 
 const newAddress = () => {
-  const pinPositionX = pinCenterPositionX;
-  const pinPositionY = pinCenterPositionY + MAIN_PIN_HEIGHT / 2 + MAIN_PIN_TIP
+  const pinPositionX = Math.floor(mainPin.offsetLeft + MAIN_PIN_WIDTH / 2);
+  const pinPositionY = Math.floor(mainPin.offsetTop + MAIN_PIN_HEIGHT / 2) + MAIN_PIN_HEIGHT / 2 + MAIN_PIN_TIP
   inputAddress.value = `${pinPositionX}, ${pinPositionY}`
 }
 
@@ -459,5 +453,71 @@ const resetForm = () => {
   deleteRedBorder(inputCapacity)
   form.reset()
   inactivatePage()
+  mainPin.style.top = (pinCenterPositionY - MAIN_PIN_WIDTH / 2) + 'px'
+  mainPin.style.left = (pinCenterPositionX - MAIN_PIN_HEIGHT / 2) + 'px'
 }
 btnReset.addEventListener('click', () => resetForm())
+
+// Реализация drag n drop
+const mapTop = 130
+const mapBottom = 630
+const mapLeft = 0
+const mapRight = 1200
+
+const limits = {
+  top: mapTop - (MAIN_PIN_HEIGHT - MAIN_PIN_TIP),
+  right: mapRight - Math.ceil(MAIN_PIN_WIDTH / 2),
+  bottom: mapBottom,
+  left: mapLeft + Math.ceil(MAIN_PIN_WIDTH / 2) - MAIN_PIN_WIDTH
+}
+
+mainPin.addEventListener('mousedown', (evt) => {
+  evt.preventDefault()
+  let startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  }
+  const onMouseMove = (moveEvt) => {
+    moveEvt.preventDefault
+    let shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY,
+    }
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    }
+    let coordinates = {
+      x: mainPin.offsetLeft - shift.x,
+      y: mainPin.offsetTop - shift.y
+    }
+    if (coordinates.x < limits.left) {
+      coordinates.x = limits.left
+    } else if (coordinates.x > limits.right) {
+      coordinates.x = limits.right
+    }
+
+    if (coordinates.y < limits.top) {
+      coordinates.y = limits.top
+    } else if (coordinates.y > limits.bottom) {
+      coordinates.y = limits.bottom
+    }
+
+    mainPin.style.top = `${coordinates.y}px`
+    mainPin.style.left = `${coordinates.x}px`
+    newAddress()
+  }
+  const onMouseUp = (upEvt) => {
+    upEvt.preventDefault
+    if (upEvt.button === MOUSE_MAIN_BUTTON) {
+      activatePage()
+    }
+    newAddress()
+    document.removeEventListener('mousemove', onMouseMove)
+    document.removeEventListener('mouseup', onMouseUp)
+  }
+  document.addEventListener('mousemove', onMouseMove)
+  document.addEventListener('mouseup', onMouseUp)
+})
+
+
