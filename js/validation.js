@@ -15,8 +15,7 @@
   const inputTimein = form.querySelector('#timein')
   const inputTimeout = form.querySelector('#timeout')
   const btnSubmit = form.querySelector('.ad-form__submit')
-  const btnReset = form.querySelector('.ad-form__reset')
-
+  
   const addRedBorder = (input) => {
     input.style = 'border: 2px solid red'
   }
@@ -159,8 +158,8 @@
     timeoutToTimein()
   })
 
-  //Реализация функционала кнопок отправить и очистить
-  const submitForm = () => {
+  // Функция, доб-щая визуальное отображение невалидных полей при попытке отправить форму 
+  const validationForm = () => {
     if (!inputTitle.validity.valid) {
       addRedBorder(inputTitle)
     } else {
@@ -177,26 +176,21 @@
       deleteRedBorder(inputCapacity)
     }
   }
-  btnSubmit.addEventListener('click', () => submitForm())
+  btnSubmit.addEventListener('click', () => validationForm())
 
-  const resetForm = () => {
-    deleteRedBorder(inputTitle)
-    deleteRedBorder(inputPrice)
-    deleteRedBorder(inputCapacity)
-    form.reset()
-    window.main.inactivatePage()
-    mainPin.style.top = (pinCenterPositionY - MAIN_PIN_WIDTH / 2) + 'px'
-    mainPin.style.left = (pinCenterPositionX - MAIN_PIN_HEIGHT / 2) + 'px'
-    inputAddress.value = `${pinCenterPositionX}, ${pinCenterPositionY}`
-  }
-  btnReset.addEventListener('click', () => resetForm())
-  
   window.validation = {
     mainPin,
     form,
+    inputTitle,
+    inputPrice,
+    inputCapacity,
+    inputAddress,
+    pinCenterPositionX,
+    pinCenterPositionY,
     MAIN_PIN_HEIGHT,
     MAIN_PIN_WIDTH,
     MAIN_PIN_TIP,
-    newAddress
+    newAddress,
+    deleteRedBorder
   }
 })()
