@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const TIMEOUT_IN_MS = 3000
-  const URL_TO_GET = `https://javascript.pages.academy/keksobooking/data`
+  const URL_TO_GET = `https://21.javascript.pages.academy/keksobooking/data`
   const URL_TO_POST = `https://21.javascript.pages.academy/keksobooking`
 
 
