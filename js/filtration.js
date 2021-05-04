@@ -39,7 +39,7 @@
     return Array.from(checkedFeatures).every((checkedFeature) => ad.offer.features.includes(checkedFeature.value))
   }
 
-  filters.addEventListener('change', onChangeFilters)
+  filters.addEventListener('change', window.debounce(onChangeFilters, 500))
 
   window.filtration = {
     housingFeatures,
