@@ -515,6 +515,15 @@ fieldset {
 
   border-radius: 5px;
   background-color: #dadada;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.ad-form-header__preview img {
+  width: 70px;
+  height: 70px;
+  border-radius: 5px;
 }
 
 .ad-form__field {
@@ -785,11 +794,58 @@ fieldset {
   margin-right: 10px;
   margin-bottom: 10px;
 
-  width: 70px;
+  min-width: 70px;
+  max-width: 295px;
   height: 70px;
 
   background-color: #e4e4de;
   border-radius: 5px;
+
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.ad-form__photo:hover {
+  cursor: pointer;
+}
+
+.ad-form__photo::-webkit-scrollbar {
+  height: 7px;
+}
+.ad-form__photo::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 86, 53, 0.6);
+  border-radius: 2px;
+}
+.ad-form__photo::-webkit-scrollbar-track {
+  background-color: rgba(100, 100, 100, 0.1);
+  border-radius: 2px;
+}
+
+.ad-form__photo div {
+  position: relative;
+  min-width: 70px;
+  height: 70px;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 70px;
+  text-align: center;
+  margin-right: 5px;
+}
+.ad-form__photo div:last-child {
+  margin-right: 0;
+}
+
+.ad-form__photo img {
+  position: absolute;
+  left: 0;
+  width: 70px;
+  height: 70px;
+  border-radius: 5px;
+}
+
+.ad-form__photo img:hover {
+  opacity: 0.5;
 }
 
 .ad-form__element--submit {

@@ -10,7 +10,8 @@
     deleteRedBorder, newAddress
   } = window.validation
   const {housingFeatures, filterSelects, onLoad} = window.filtration
-
+  const {previewAvatar, previewPhotos} = window.imageUpload
+  
   const MOUSE_MAIN_BUTTON = 0
 
   // Поля формы и фильтрации в неактивном состоянии
@@ -61,6 +62,8 @@
     deleteRedBorder(inputPrice)
     deleteRedBorder(inputCapacity)
     form.reset()
+    previewAvatar.src = 'img/muffin-grey.svg'
+    previewPhotos.innerHTML = ''
     inactivatePage()
     mainPin.addEventListener('mousedown', onMainPinActivateMouseDown)
     mainPin.style.top = (pinCenterPositionY - MAIN_PIN_WIDTH / 2) + 'px'
