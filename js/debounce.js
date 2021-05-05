@@ -1,13 +1,11 @@
 'use strict';
-
-(() => {
+;(() => {
   window.debounce = (func, wait) => {
     let timeout
     return function() {
       const context = this
       const args = arguments
-  
-      const later = function() {
+      const later = () => {
         timeout = null
         func.apply(context, args)
       }
@@ -15,5 +13,4 @@
       timeout = setTimeout(later, wait)
     }
   }
-
 })()

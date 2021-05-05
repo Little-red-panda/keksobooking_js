@@ -1,8 +1,9 @@
 'use strict';
-(() => {
+;(() => {
   const MAIN_PIN_HEIGHT = 62
   const MAIN_PIN_WIDTH = 62
   const MAIN_PIN_TIP = 22
+
   const mainPin = document.querySelector('.map__pin--main')
   const form = document.querySelector('.ad-form')
   const inputTitle = form.querySelector('#title')
@@ -16,6 +17,7 @@
   const inputTimeout = form.querySelector('#timeout')
   const btnSubmit = form.querySelector('.ad-form__submit')
   
+  // Визуальное отображение ошибок
   const addRedBorder = (input) => {
     input.style = 'border: 2px solid red'
   }
@@ -91,7 +93,7 @@
     let minPrice = typeToPrice[inputType.value]
     setMinPrice(minPrice)
   })
-  inputPrice.addEventListener('change', () => {
+  inputPrice.addEventListener('input', () => {
     validationPrice()
     inputPrice.reportValidity()
     deleteRedBorder(inputPrice)
@@ -160,21 +162,9 @@
 
   // Функция, доб-щая визуальное отображение невалидных полей при попытке отправить форму 
   const validationForm = () => {
-    if (!inputTitle.validity.valid) {
-      addRedBorder(inputTitle)
-    } else {
-      deleteRedBorder(inputTitle)
-    }
-    if (!inputPrice.validity.valid) {
-      addRedBorder(inputPrice)
-    } else {
-      deleteRedBorder(inputPrice)
-    }
-    if (!inputCapacity.validity.valid) {
-      addRedBorder(inputCapacity)
-    } else {
-      deleteRedBorder(inputCapacity)
-    }
+    !inputTitle.validity.valid ? addRedBorder(inputTitle) : deleteRedBorder(inputTitle)
+    !inputPrice.validity.valid ? addRedBorder(inputPrice) : deleteRedBorder(inputPrice)  
+    !inputCapacity.validity.valid ? addRedBorder(inputCapacity) : deleteRedBorder(inputCapacity)
   }
   btnSubmit.addEventListener('click', () => validationForm())
 

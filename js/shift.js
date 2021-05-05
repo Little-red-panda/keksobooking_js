@@ -1,10 +1,7 @@
 'use strict';
-(() => {
-  
-  
+;(() => {
   const {mainPin, newAddress, MAIN_PIN_HEIGHT, MAIN_PIN_WIDTH, MAIN_PIN_TIP} = window.validation
   
-
   const mapTop = 130
   const mapBottom = 630
   const mapLeft = 0
@@ -16,7 +13,6 @@
     bottom: mapBottom,
     left: mapLeft + Math.ceil(MAIN_PIN_WIDTH / 2) - MAIN_PIN_WIDTH
   }
-  
 
   const onMainPinSetAddressMouseDown = (evt) => {
     evt.preventDefault()
@@ -38,12 +34,13 @@
         x: mainPin.offsetLeft - shift.x,
         y: mainPin.offsetTop - shift.y
       }
+
       if (coordinate.x < dregLimit.left) {
         coordinate.x = dregLimit.left
       } else if (coordinate.x > dregLimit.right) {
         coordinate.x = dregLimit.right
       }
-
+      
       if (coordinate.y < dregLimit.top) {
         coordinate.y = dregLimit.top
       } else if (coordinate.y > dregLimit.bottom) {
@@ -63,7 +60,6 @@
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
   }
-  
   
   mainPin.addEventListener('mousedown', onMainPinSetAddressMouseDown)
 })()

@@ -1,5 +1,6 @@
 'use strict';
-(() => {
+;(() => {
+  const {map} = window.cityPlan
   const {openCard} = window.card
   const getPins = (data) => {
     const pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin')
@@ -15,7 +16,16 @@
     })
     return fragment
   }
+  const clearPins = () => {
+    const samePins = map.querySelectorAll('.map__pin:not(.map__pin--main')
+    if (samePins) {
+      samePins.forEach(el => {
+        el.parentNode.removeChild(el)
+      })
+    }
+  }
   window.pins = {
-    getPins
+    getPins,
+    clearPins
   }
 })()

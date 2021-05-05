@@ -1,6 +1,7 @@
-(() => {
+'use strict';
+;(() => {
   const {mapPins} = window.cityPlan
-  const {getPins} = window.pins
+  const {getPins, clearPins} = window.pins
   const {closeCard} = window.card
 
   const filters = document.querySelector('.map__filters')
@@ -24,7 +25,7 @@
   const onChangeFilters = () => {
     let newAds = ads.filter((ad) => filterType(ad) && filterPrice(ad) && filterRooms(ad) && filterGuests(ad) && filterFeatures(ad))
     closeCard()
-    window.main.clearPins()
+    clearPins()
     updateAds(newAds)
   }
   const filterType = (ad) => housingType.value === ad.offer.type || housingType.value === 'any'
@@ -42,6 +43,7 @@
   filters.addEventListener('change', window.debounce(onChangeFilters, 500))
 
   window.filtration = {
+    filters,
     housingFeatures,
     filterSelects,
     onLoad
