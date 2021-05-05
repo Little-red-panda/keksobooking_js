@@ -1,16 +1,16 @@
 'use strict';
-(() => {
-  const {load} = window.backend
-  const {upload} = window.backend
+;(() => {
+  const {load, upload} = window.backend
   const {map, onError} = window.cityPlan
   const {closeCard} = window.card
+  const {clearPins} = window.pins
   const {
     form, inputTitle, inputAddress, inputPrice, inputCapacity,
     mainPin, pinCenterPositionX, pinCenterPositionY, MAIN_PIN_WIDTH, MAIN_PIN_HEIGHT,
     deleteRedBorder, newAddress
   } = window.validation
-  const {housingFeatures, filterSelects, onLoad} = window.filtration
-  const {previewAvatar, previewPhotos} = window.imageUpload
+  const {filters, housingFeatures, filterSelects, onLoad} = window.filtration
+  const {defaultPreviews} = window.imageUpload
   
   const MOUSE_MAIN_BUTTON = 0
 
@@ -24,7 +24,7 @@
   const activatePage = () => {
     map.classList.remove('map--faded')
     form.classList.remove('ad-form--disabled')
-    window.main.formFieldsets.forEach(el => el.removeAttribute('disabled'))
+    formFieldsets.forEach(el => el.removeAttribute('disabled'))
     filterSelects.forEach(el => el.removeAttribute('disabled'))
     housingFeatures.removeAttribute('disabled')
     load(onLoad, onError)
@@ -47,23 +47,15 @@
     clearPins()
     closeCard()
   }
-  const clearPins = () => {
-    const samePins = map.querySelectorAll('.map__pin:not(.map__pin--main')
-    if (samePins) {
-      samePins.forEach(el => {
-        el.parentNode.removeChild(el)
-      })
-    }
-  }
 
   // Реализация функционала кнопки "очистить"
   const resetForm = () => {
     deleteRedBorder(inputTitle)
     deleteRedBorder(inputPrice)
     deleteRedBorder(inputCapacity)
+    filters.reset()
     form.reset()
-    previewAvatar.src = 'img/muffin-grey.svg'
-    previewPhotos.innerHTML = ''
+    defaultPreviews()
     inactivatePage()
     mainPin.addEventListener('mousedown', onMainPinActivateMouseDown)
     mainPin.style.top = (pinCenterPositionY - MAIN_PIN_WIDTH / 2) + 'px'
@@ -85,21 +77,25 @@
       new FormData(form)
     )
   })
-  const showSuccessMessage = () => {
-    addMessage('success')
-    document.addEventListener('click', bannerClick)
-    document.addEventListener('keydown', bannerKeyDown)
-  }
-  const showErrorMessage = () => {
-    addMessage('error')
-    document.addEventListener('click', bannerClick)
-    document.addEventListener('keydown', bannerKeyDown)
-  }
+
   const addMessage = (submissionResult) => {
     const newTemplate = document.querySelector(`#${submissionResult}`).content.querySelector(`.${submissionResult}`)
     const el = newTemplate.cloneNode(true)
     map.appendChild(el)
   }
+  // Сообщенеие об успешной отправке
+  const showSuccessMessage = () => {
+    addMessage('success')
+    document.addEventListener('click', bannerClick)
+    document.addEventListener('keydown', bannerKeyDown)
+  }
+  // Сообщение об ошибке 
+  const showErrorMessage = () => {
+    addMessage('error')
+    document.addEventListener('click', bannerClick)
+    document.addEventListener('keydown', bannerKeyDown)
+  }
+  
   const closeBanner = () => {
     let messege = document.querySelector(`.success`)
     if (messege) {

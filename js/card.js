@@ -1,5 +1,5 @@
 'use strict';
-(() => {
+;(() => {
   const {map, mapFilters} = window.cityPlan
 
   const getCard = (data) => {
@@ -34,6 +34,7 @@
       return `${n} ${suffix}`;
     };
     const getRooms = formatRooms(rooms)
+
     // Вывод удобств жилья
     const getFeatures =  (array) => {
       const cardFragment = document.createDocumentFragment()
@@ -45,6 +46,7 @@
       });
       return cardFragment
     }
+
     // Перевод типа жилья на русский язык
     const cardType = card.querySelector('.popup__type')
     const housing = {
@@ -67,6 +69,7 @@
         cardType.textContent = 'Бунгало'
         break
     }
+
     // Вывод фотографий жилья
     const getPhotos = (array) => {
       const cardPhoto = card.querySelector('.popup__photos').querySelector('img')
@@ -79,9 +82,10 @@
       })
       return cardFragment
     }
+
     // Собираем карточку
     card.querySelector('.popup__title').textContent = title
-    card.querySelector('.popup__text--address').textContent = adress // ?
+    card.querySelector('.popup__text--address').textContent = adress
     card.querySelector('.popup__text--price').textContent = `${price}₽/ночь`
     card.querySelector('.popup__text--capacity').textContent = `${getRooms} для ${getGuests}`
     card.querySelector('.popup__text--time').textContent = `Заезд после ${checkin}, выезд до ${checkout}`
@@ -94,8 +98,9 @@
     closeButton.addEventListener('click', closeCard)
     return card
   }
+
   // Функции открытия/закрытия карточки объявления
-  const onMapCardEscPress = (evt) => {
+  const onMapEscPress = (evt) => {
     if (evt.key === `Escape`) {
       closeCard();
     }
@@ -103,14 +108,14 @@
   const openCard = (object) => {
     closeCard()
     getCard(object)
-    document.addEventListener('keydown', onMapCardEscPress)
+    document.addEventListener('keydown', onMapEscPress)
   }
   const closeCard = () => {
     const card = document.querySelector('.map__card')
     if (card) {
       card.remove()
     }
-    document.removeEventListener('keydown', onMapCardEscPress)
+    document.removeEventListener('keydown', onMapEscPress)
   }
   
   window.card = {

@@ -1,9 +1,10 @@
 'use strict';
-(() => {
+;(() => {
   const map = document.querySelector('.map');
   const mapPins = document.querySelector('.map__pins')
   const mapFilters = document.querySelector('.map__filters-container') // Элемент, перед которым будем вставлять карточку объявления
 
+  // Сообщение об ошибке отправке данных на сервер
   const onError = (errorMessege) => {
     const errorBox = document.createElement('div')
     errorBox.textContent = errorMessege
