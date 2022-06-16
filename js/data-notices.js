@@ -66,7 +66,7 @@
         offer:
         {
           title: noticeTitles[i],
-          adress: (locationX + ', ' + locationY),
+          address: (locationX + ', ' + locationY),
           price: getRandomNumber(DATA_NOTICES.MIN_PRICE, DATA_NOTICES.MAX_PRICE),
           type: getRandomElement(DATA_NOTICES.TYPE_OF_ROOMS),
           rooms: getRandomNumber(DATA_NOTICES.MIN_ROOMS, DATA_NOTICES.MAX_ROOMS),

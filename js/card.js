@@ -5,7 +5,7 @@
   const getCard = (data) => {
     const cardTemplate = document.querySelector('#card').content.querySelector('.map__card')
     const card = cardTemplate.cloneNode(true)
-    const {title, adress, price, type, rooms, guests, checkin, checkout, features, description, photos} = data.offer
+    const {title, address, price, type, rooms, guests, checkin, checkout, features, description, photos} = data.offer
     const {avatar} = data.author
   
     // Плюрализация комнат и гостей
@@ -85,7 +85,7 @@
 
     // Собираем карточку
     card.querySelector('.popup__title').textContent = title
-    card.querySelector('.popup__text--address').textContent = adress
+    card.querySelector('.popup__text--address').textContent = address
     card.querySelector('.popup__text--price').textContent = `${price}₽/ночь`
     card.querySelector('.popup__text--capacity').textContent = `${getRooms} для ${getGuests}`
     card.querySelector('.popup__text--time').textContent = `Заезд после ${checkin}, выезд до ${checkout}`

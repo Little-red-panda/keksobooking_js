@@ -8,7 +8,7 @@
     data.forEach(pinData => {
       const pin = pinTemplate.cloneNode(true)
       const pinImg = pin.querySelector('img')
-      pin.style = `left: ${pinData.location.x - pinImg.width / 2}px; top: ${pinData.location.y - pinImg.height / 2}px`
+      pin.style = `left: ${(Math.floor(Math.random() * 601 + 300)) - pinImg.width }px; top: ${(Math.floor(Math.random() * 501 + 130)) - pinImg.height }px`
       pinImg.src = pinData.author.avatar
       pinImg.alt = pinData.offer.title
       fragment.append(pin)
